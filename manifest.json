@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "GptExtesion",
+    "description": "GPT Everywhere",
+    "version": "1.0.0",
+    "icons": {"128": "unnamed.png"},
+    "browser_action": {
+      "default_icon": "unnamed.png",
+      "default_popup": "popup.html"
+    },
+    "permissions": ["activeTab", "storage"],
+    "content_scripts": [
+      {
+        "matches": [
+          "<all_urls>"
+        ],
+        "js": [
+          "index.js"
+        ]
+      }
+    ]
+  }
