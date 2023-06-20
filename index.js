@@ -4,20 +4,20 @@ function addListener(selector, event, callback) {
 }
 
 
-function setStorageValue(obj, callback=null) {
+function setStorageValue(obj, callback = null) {
   chrome.storage.local.set(obj, callback);
 }
 
 
 function getStorageValue(key) {
   return new Promise((resolve, reject) => {
-      try {
-          chrome.storage.local.get(key, function(result) {
-              resolve(result[key]);
-          });
-      }catch(ex) {
-          reject(ex)
-      }
+    try {
+      chrome.storage.local.get(key, function (result) {
+        resolve(result[key]);
+      });
+    } catch (ex) {
+      reject(ex)
+    }
   });
 }
 
@@ -36,27 +36,27 @@ const dialogStyle = `
 `;
 
 
-async function askGpt (text) {
+async function askGpt(text) {
   try {
-      getStorageValue('apikey').then(token => {
-        if (token) {
-          fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              model:"gpt-3.5-turbo",
-              messages:[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": text}
-              ]
-            })
+    getStorageValue('apikey').then(token => {
+      if (token) {
+        fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              { "role": "system", "content": "You are a helpful assistant." },
+              { "role": "user", "content": text }
+            ]
           })
+        })
           .then(response => response.json())
           .then(response => alert(response.choices[0].message.content))
-        }
+      }
     })
   } catch (error) {
     alert(error)
@@ -72,9 +72,8 @@ function showDialog(text) {
       <button id="gpt_ext_close">Закрыть</button>
     </div>
   `;
-  debugger
-  addListener('#gpt_ext_close', 'click', ()=>{document.querySelector('#gpt_ext_modal').remove()})
-  addListener('#gpt_ext_ask', 'click', ()=>{askGpt(document.querySelector('#gpt_ext_question').value)})
+  addListener('#gpt_ext_close', 'click', () => { document.querySelector('#gpt_ext_modal').remove() })
+  addListener('#gpt_ext_ask', 'click', () => { askGpt(document.querySelector('#gpt_ext_question').value) })
 }
 
 
@@ -84,7 +83,7 @@ document.addEventListener('mouseup', () => {
     if (selection && value) {
       try {
         document.querySelector('#gpt_ext_modal').remove()
-      }catch (ex) {
+      } catch (ex) {
         console.log(ex)
       }
       showDialog(selection);
@@ -94,24 +93,23 @@ document.addEventListener('mouseup', () => {
 });
 
 
-
 function modalMove() {
   const modal = document.querySelector('#gpt_ext_modal');
-          let isDragging = false;
-          let offsetX = 0;
-          let offsetY = 0;
-          modal.addEventListener('mousedown', (e) => {
-            isDragging = true;
-              offsetX = e.offsetX;
-              offsetY = e.offsetY; 
-          }); 
-          document.addEventListener('mousemove', (e) => { 
-            if (isDragging) { 
-              modal.style.top = `${e.clientY - offsetY}px`; 
-              modal.style.left = `${e.clientX - offsetX}px`; 
-            }
-          }); 
-          document.addEventListener('mouseup', () => {
-            isDragging = false; 
-          });
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+  modal.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      modal.style.top = `${e.clientY - offsetY}px`;
+      modal.style.left = `${e.clientX - offsetX}px`;
+    }
+  });
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
 }
